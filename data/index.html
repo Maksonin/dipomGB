@@ -1,0 +1,117 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Управление нагрузкой ESP32</title>
+<style>
+
+body {
+    display: flex;
+    width: 50%;
+    margin: auto;
+    flex-direction: column;
+    text-align: center;
+}
+
+#channelUpravBlock {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+    text-align: center;
+}
+
+#channelUpravBlock .channel {
+	border: 1px solid black;
+	padding: 10px;
+	margin: 20px;
+}
+
+</style>
+</head>
+
+<body>
+<h3>Control of relay channels</h3>
+
+<div id="climateBlock">
+	<p id="shtTemp">-- C</p>
+	<p id="shtHum">-- %</p>
+</div>
+
+<div id="channelUpravBlock">
+	<div class="channelBlock">  
+		<p class="channel">1</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">2</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">3</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">4</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">5</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">6</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">7</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+	<div class="channelBlock">  
+		<p class="channel">8</p>
+		<p class="channelV">-- В</p>
+		<p class="channelA">-- A</p>
+	</div>
+</div>
+</body>
+
+<script>
+
+var response;
+
+function channelClick(){
+	console.log(this.getHTML());
+}
+
+// отправка get запроса и получения данных с сервера
+function getData(data){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', data, true);
+	xhr.send();
+	xhr.onreadystatechange = function() {
+		response = JSON.parse(xhr.responseText);
+		console.log(response);
+	};
+}
+
+getData("data");
+
+
+// обработка события нажатия на поле канала
+var items = document.getElementsByClassName('channel');
+
+for (var i = 0; i < items.length; i++) {
+    items[i].addEventListener('click', channelClick);
+}
+
+
+
+</script>
+
+
+</html>
