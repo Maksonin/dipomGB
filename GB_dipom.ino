@@ -9,6 +9,7 @@
 #include <microDS3231.h>
 #include "Wire.h"
 #include "SHT2x.h"
+#include <uri/UriBraces.h>
 
 // #define OneWirePin 20
 #define FORMAT_SPIFFS_IF_FAILED true
@@ -52,9 +53,9 @@ struct pinStatus{
   bool btn1;
   bool led1;
   bool led2;
-  bool chanel[8];
-  uint8_t chanelV[8];
-  uint8_t chanelA[8];
+  bool channel[8];
+  uint8_t channelV[8];
+  uint8_t channelA[8];
   uint16_t acp;
 } pinStatus;
 
@@ -102,8 +103,8 @@ void getShtTH(){
 void getPinStatus(){
   pinStatus.btn1 = digitalRead(btnPin);
 
-  digitalWrite(ledPin1, pinStatus.led1);
-  digitalWrite(ledPin2, pinStatus.led2);
+  digitalWrite(ledPin1, pinStatus.channel[0]);
+  digitalWrite(ledPin2, pinStatus.channel[1]);
 }
 
 /* Функция формирующая ответ на запрос веб-сервера */
@@ -113,6 +114,20 @@ void handle_OnConnect() {
 
 void handle_Data(){
   server.send(200, "text/html", prepareJsonData());
+}
+
+void handle_Relay(){
+  String relay = server.pathArg(0);
+  Serial.print("Включено реле - ");
+  Serial.println(relay);
+  uint8_t i = relay.toInt() - 1;
+  
+  if(pinStatus.channel[i] == 1)
+    pinStatus.channel[i] = 0;
+  else
+    pinStatus.channel[i] = 1;
+
+  server.send(200, "text/html","OK");
 }
 
 String prepareJsonData(){
@@ -133,7 +148,7 @@ String prepareJsonData(){
 
   tmp += ", \"relay\": [";
   for(int i = 0; i < 8; i++){
-    tmp += (String)pinStatus.chanel[i];
+    tmp += (String)pinStatus.channel[i];
     if(i < 7)
        tmp += ",";
   }
@@ -141,7 +156,7 @@ String prepareJsonData(){
 
   tmp += ", \"relayV\": [";
   for(int i = 0; i < 8; i++){
-    tmp += (String)pinStatus.chanelV[i];
+    tmp += (String)pinStatus.channelV[i];
     if(i < 7)
        tmp += ",";
   }
@@ -149,7 +164,7 @@ String prepareJsonData(){
 
   tmp += ", \"relayA\": [";
   for(int i = 0; i < 8; i++){
-    tmp += (String)pinStatus.chanelA[i];
+    tmp += (String)pinStatus.channelA[i];
     if(i < 7)
        tmp += ",";
   }
@@ -246,8 +261,6 @@ void setup() {
     myIP = WiFi.softAPIP();
     Serial.print("AP IP address: ");
     Serial.println(myIP);
-    server.on("/", handle_OnConnect);
-    server.on("/data", handle_Data);
   }
   else {
     WiFi.mode(WIFI_STA);
@@ -274,6 +287,10 @@ void setup() {
   }
   /* настройка wifi */
 
+  server.on("/", handle_OnConnect);
+  server.on("/data", handle_Data);
+  server.on(UriBraces("/relay:{}"), handle_Relay);
+
   /* настройка датчиков */
   // ds.requestTemp();  // первый запрос на измерение температуры DS18B20
 
@@ -294,8 +311,6 @@ void setup() {
   pinMode(btnPin, INPUT_PULLUP);
   pinMode(ledPin1, OUTPUT);
   pinMode(ledPin2, OUTPUT);
-
-  pinStatus.led1 = true;
 
   /* настройка gpio */
 
@@ -318,7 +333,7 @@ void loop() {
 
   // printUartData();
 
-  delay(300);
+  //delay(300);
 
 }
 

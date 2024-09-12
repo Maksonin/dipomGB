@@ -1,81 +1,111 @@
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Управление нагрузкой ESP32</title>
-<style>
+	<meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate, no-cache, no-store, must-revalidate, private"/>
+	<meta http-equiv="Expires" content="Thu, 01 Jan 1970 00:00:00 GMT">
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+	<title>Управление нагрузкой ESP32</title>
+	<style>
 
-body {
-    display: flex;
-    width: 50%;
-    margin: auto;
-    flex-direction: column;
-    text-align: center;
-}
+	body {
+		display: flex;
+		width: 50%;
+		margin: auto;
+		flex-direction: column;
+		text-align: center;
+	}
 
-#channelUpravBlock {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-    text-align: center;
-}
+	#mainTitle {
+		width: 100%;
+		background-color: aquamarine;
+		padding: 15px;
+		color: midnightblue;
+		border-radius: 10px;
+		border: 1px solid;
+	}
 
-#channelUpravBlock .channel {
-	border: 1px solid black;
-	padding: 10px;
-	margin: 20px;
-}
+	#channelUpravBlock {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		text-align: center;
+	}
 
-</style>
+	#channelUpravBlock .channel {
+		border: 1px solid black;
+		border-radius: 5px;
+		padding: 15px;
+		margin: 20px;
+	}
+
+	.channelOpen {
+		background-color: lightseagreen;
+	}
+
+	.channelClose {
+		background-color: lightgray;
+	}
+
+	.channelWait {
+		background-color: lightsalmon;
+	}
+
+	.channelAlarm {
+		background-color: red;
+	}
+
+	</style>
 </head>
 
 <body>
-<h3>Control of relay channels</h3>
+<h3 id="mainTitle">Control of relay channels</h3>
 
 <div id="climateBlock">
-	<p id="shtTemp">-- C</p>
-	<p id="shtHum">-- %</p>
+	<p><span id="shtTemp">-- </span><span> C</span></p>
+	<p><span id="shtHum"> -- </span><span> %</span></p>
 </div>
 
 <div id="channelUpravBlock">
 	<div class="channelBlock">  
 		<p class="channel">1</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">2</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">3</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">4</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">5</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">6</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">7</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 	<div class="channelBlock">  
 		<p class="channel">8</p>
-		<p class="channelV">-- В</p>
-		<p class="channelA">-- A</p>
+		<p><span class="channelV">--</span><span> В</span></p>
+		<p><span class="channelA">--</span><span> A</span></p>
 	</div>
 </div>
 </body>
@@ -86,27 +116,67 @@ var response;
 
 function channelClick(){
 	console.log(this.getHTML());
+	this.className = "channel channelWait";
+	sendCom("relay", this.getHTML());
+}
+
+function sendCom(command, param){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', "/" + command + ":" + param, true);
+	xhr.send();
+	xhr.onloadend = function() {
+		console.log("sendCom!");
+		console.log(xhr.responseText);
+	}
+	xhr.onerror = function(){
+		console.log("Error sendCom!");
+	}
 }
 
 // отправка get запроса и получения данных с сервера
-function getData(data){
+function getData(){
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', data, true);
+	xhr.open('GET', "data", true);
 	xhr.send();
-	xhr.onreadystatechange = function() {
+	xhr.onloadend = function() {
+		// console.log(xhr.responseText);
 		response = JSON.parse(xhr.responseText);
 		console.log(response);
+		setData();
 	};
+	xhr.onerror = function(){
+		console.log("Error!");
+	}
 }
 
-getData("data");
+function setData(){
+	// data set
+	for(i = 0; i < 8; i++){
+		// relay set
+		if(response.pinStatus.relay[i] == 1)
+			channel[i].className = "channel channelOpen";
+		else
+			channel[i].className = "channel channelClose";
 
+		// V,A sensors set
+		channelV[i].innerHTML = response.pinStatus.relayV[i];
+		channelA[i].innerHTML = response.pinStatus.relayA[i];
+	}
+	shtTemp.innerHTML = response.temper.shtTemper;
+	shtHum.innerHTML = response.temper.shtHumid;
+
+}
+
+getData();
+var timerID = setInterval(getData, 2000);
 
 // обработка события нажатия на поле канала
-var items = document.getElementsByClassName('channel');
+var channel = document.getElementsByClassName('channel');
+var channelV = document.getElementsByClassName('channelV');
+var channelA = document.getElementsByClassName('channelA');
 
-for (var i = 0; i < items.length; i++) {
-    items[i].addEventListener('click', channelClick);
+for (var i = 0; i < channel.length; i++) {
+    channel[i].addEventListener('click', channelClick);
 }
 
 
