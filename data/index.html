@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate, no-cache, no-store, must-revalidate, private"/>
+	<meta http-equiv="Cache-Control" content="max-age=0, must-revalidate, no-cache, no-store, must-revalidate, private"/>
 	<meta http-equiv="Expires" content="Thu, 01 Jan 1970 00:00:00 GMT">
 	<meta http-equiv="Pragma" content="no-cache"/>
 	<meta http-equiv="Expires" content="0"/>
@@ -10,19 +10,34 @@
 
 	body {
 		display: flex;
-		width: 50%;
+		width: 70%;
 		margin: auto;
 		flex-direction: column;
 		text-align: center;
 	}
 
 	#mainTitle {
+		display: flex;
+		justify-content: space-between;
 		width: 100%;
 		background-color: aquamarine;
-		padding: 15px;
 		color: midnightblue;
 		border-radius: 10px;
 		border: 1px solid;
+		margin: 10px;
+	}
+
+	#menuSetting {
+		margin: 10px;
+		align-content: center;
+	}
+
+	.menuBlockText {
+		font-size: 1em;
+	}
+
+	.menuBlockSym {
+		font-size: 2em;
 	}
 
 	#channelUpravBlock {
@@ -37,6 +52,10 @@
 		border-radius: 5px;
 		padding: 15px;
 		margin: 20px;
+	}
+
+	#channelUpravBlock .channel:hover {
+		border: 1px solid lightcoral;
 	}
 
 	.channelOpen {
@@ -59,55 +78,65 @@
 </head>
 
 <body>
-<h3 id="mainTitle">Control of relay channels</h3>
+	<div id="mainTitle">
+		<div id="menuSetting">
+			<span id="deviceMode" class="menuBlockText">AP</span>
+		</div>
+		<h3 >Control of relay channels</h3>
+		<div id="menuSetting">
+			<span class="menuBlockSym"> &#9881 </span>
+		</div>
+		
+	</div>
 
-<div id="climateBlock">
-	<p><span id="shtTemp">-- </span><span> C</span></p>
-	<p><span id="shtHum"> -- </span><span> %</span></p>
-</div>
 
-<div id="channelUpravBlock">
-	<div class="channelBlock">  
-		<p class="channel">1</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
+	<div id="climateBlock">
+		<p><span id="shtTemp">-- </span><span> C</span></p>
+		<p><span id="shtHum"> -- </span><span> %</span></p>
 	</div>
-	<div class="channelBlock">  
-		<p class="channel">2</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
+
+	<div id="channelUpravBlock">
+		<div class="channelBlock">  
+			<p class="channel">1</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">2</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">3</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">4</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">5</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">6</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">7</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
+		<div class="channelBlock">  
+			<p class="channel">8</p>
+			<p><span class="channelV">--</span><span> В</span></p>
+			<p><span class="channelA">--</span><span> A</span></p>
+		</div>
 	</div>
-	<div class="channelBlock">  
-		<p class="channel">3</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-	<div class="channelBlock">  
-		<p class="channel">4</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-	<div class="channelBlock">  
-		<p class="channel">5</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-	<div class="channelBlock">  
-		<p class="channel">6</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-	<div class="channelBlock">  
-		<p class="channel">7</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-	<div class="channelBlock">  
-		<p class="channel">8</p>
-		<p><span class="channelV">--</span><span> В</span></p>
-		<p><span class="channelA">--</span><span> A</span></p>
-	</div>
-</div>
 </body>
 
 <script>
@@ -150,6 +179,9 @@ function getData(){
 }
 
 function setData(){
+	var dMode = ["WiFi AP","LAN","WiFi AP + LAN","Wifi STA", "WiFi STA + LAN"];
+	deviceMode.innerHTML = dMode[response.setting.mode];
+
 	// data set
 	for(i = 0; i < 8; i++){
 		// relay set

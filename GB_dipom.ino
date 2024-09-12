@@ -32,8 +32,20 @@ IPAddress myIP;
 
 Preferences pref;
 
+enum {
+  WF_AP,
+  LAN,
+  WF_AP_LAN,
+  WF_STA,
+  WF_STA_LAN
+} deviceMode;
+
 struct setting {
-  bool mode; // 0 - работа по сети, 1 - работа по вифи
+  uint8_t mode; // 0 - режим WiFi AP (точка доступа вифи)
+                // 1 - режим Lan Ethernet (модуль w5500)
+                // 2 - режим WiFi AP + Lan Ethernet
+                // 3 - режим WiFi STA
+                // 4 - режим WiFi STA + Lan Ethernet
   String wifiSsid;
   String wifiPass;
 } setting;
@@ -133,6 +145,14 @@ void handle_Relay(){
 String prepareJsonData(){
   String tmp = "";
   tmp += "{ ";
+
+  tmp += "\"setting\": { \"mode\":";
+  tmp += setting.mode;
+  tmp += ", \"wifiSsid\":";
+  tmp += setting.wifiSsid;
+  tmp += ", \"wifiPass\":";
+  tmp += setting.wifiPass;
+  tmp += " },";
 
   tmp += "\"temper\": { \"shtTemper\":";
   tmp += dataSensors.shtTemper;
@@ -255,6 +275,7 @@ void setup() {
 
   /* настройка wifi */
   if(setting.wifiSsid == "0"){
+    setting.mode = WF_AP;
     WiFi.softAP("userAP", "012345678");
     server.begin();
     Serial.println("HTTP server started");
@@ -263,6 +284,7 @@ void setup() {
     Serial.println(myIP);
   }
   else {
+    setting.mode = WF_STA;
     WiFi.mode(WIFI_STA);
     WiFi.begin(setting.wifiSsid, setting.wifiPass);
     // Wait for connection
