@@ -16,6 +16,9 @@ class ChannelData{
     static uint8_t channelA[8];
     static uint16_t acp;
 
+
+
+
     void init();
     void getShtTH();
     void getPinStatus();

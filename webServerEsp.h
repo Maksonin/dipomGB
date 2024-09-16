@@ -4,7 +4,6 @@
 
 enum {
   WF_AP,
-  LAN,
   WF_AP_LAN,
   WF_STA,
   WF_STA_LAN

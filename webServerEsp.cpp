@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include "webServerEsp.h"
+#include "webServerEthernet.h"
 #include <Preferences.h>
 #include "SPIFFS.h"
 
@@ -19,6 +20,7 @@ String WebServerEsp::dataIn;
 Preferences pref;
 
 WebServer server(80);
+WebServerEth ethServer;
 IPAddress myIP;
 
 void WebServerEsp::init(){
@@ -78,6 +80,13 @@ void WebServerEsp::init(){
     }
   }
   /* настройка wifi */
+
+  ethServer.init();
+  if(ethServer.ethStatus == 2){
+    mode++;
+    ethServer.dataOut = readFileFS(SPIFFS, "/index.html");
+  }
+
   server.begin();
   server.on("/", handle_OnConnect);
   server.on("/data", handle_Data);
@@ -86,6 +95,7 @@ void WebServerEsp::init(){
 
 void WebServerEsp::serverHandleClient(){
   server.handleClient();
+  ethServer.handleClient();
 }
 
 /* Функция формирующая ответ на запрос "/" веб-сервера */
@@ -163,13 +173,13 @@ String WebServerEsp::readFileFS(fs::FS &fs, const char *path) {
     return "";
   }
 
-  Serial.println("- read from file:");
+  // Serial.println("- read from file:");
   
   while (file.available()) {
     tmp += file.readString();
   }
   
-  Serial.println(tmp);
+  //Serial.println(tmp);
   file.close();
   return tmp;
 }

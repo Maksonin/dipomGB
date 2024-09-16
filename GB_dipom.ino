@@ -1,4 +1,3 @@
-//#include <Ethernet.h>
 #include "webServerEsp.h"
 #include "channelData.h"
 
@@ -60,7 +59,7 @@ String prepareJsonData(){
   tmp += " }";
 
   tmp += " }";
-  Serial.println(tmp);
+  //Serial.println(tmp);
   return tmp;
 }
 
