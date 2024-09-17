@@ -20,6 +20,10 @@ String prepareJsonData(){
   tmp += "\"" + myServer.wifiSsid + "\"";
   tmp += ", \"wifiPass\":";
   tmp += "\"" + myServer.wifiPass + "\"";
+  tmp += ", \"wifiIp\":";
+  tmp += "\"" + myServer.wifiIp.toString() + "\"";
+  tmp += ", \"lanIp\":";
+  tmp += "\"" + myServer.lanIp.toString() + "\"";
   tmp += " },";
 
   tmp += "\"temper\": { \"shtTemper\":";

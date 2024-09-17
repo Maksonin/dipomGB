@@ -24,12 +24,45 @@
 		color: midnightblue;
 		border-radius: 10px;
 		border: 1px solid;
-		margin: 10px;
 	}
 
 	#menuSetting {
 		margin: 10px;
 		align-content: center;
+	}
+
+	#settingWindow {
+		width: 65%;
+		height: 60%;
+		text-align: center;
+		padding: 15px;
+		border: 1px solid black;
+		border-radius: 10px;
+		color: black;
+		display: none;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		margin: 7% auto;
+		background: white;
+		flex-direction: column;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	#settingWindow:target {display: flex;}
+
+	#closeWindow {
+		
+	}
+	
+	.readSetting {
+		display: inline-block;
+		margin: 5px 10px;
+		border: 1px solid;
+		padding: 5px;
+		width: 20%;
 	}
 
 	.menuBlockText {
@@ -84,11 +117,33 @@
 		</div>
 		<h3 >Control of relay channels</h3>
 		<div id="menuSetting">
-			<span class="menuBlockSym"> &#9881 </span>
+			<a href="#settingWindow" class="menuBlockSym"> &#9881 </a>
 		</div>
 		
 	</div>
 
+	<div id="settingWindow">
+		<h3>Настройки</h3>
+		<div class="blockSettings">
+			<p>Текущее подключение WiFi</p>
+			<p><span for="wifiSsid">SSID </span><span id="wifiSsid" class="readSetting">--</span></p>
+			<p><span for="wifiIP">IP </span><span id="wifiIP" class="readSetting">--</span></p>
+		</div>
+		<div class="blockSettings">
+			<p>Подключение LAN</p>
+			<p><span for="lanIP">IP </span><span id="lanIP" class="readSetting">--</span></p>
+		</div>
+		<div class="blockSettings">
+		<!-- <form id="auth" action="" method="post" class="blockSettings"> -->
+			<p>Новые настройки WiFi</p>
+			<p><span for="wifiSsidNew">SSID </span><input id="wifiSsidNew" type="text"></p>
+			<p><span for="wifiPasNew">PASS </span><input id="wifiPasNew" type="password"></p>
+			<button onclick="sendWifiSett(wifiSsidNew.value,wifiPasNew.value)">Сохранить</button>
+		<!-- </form> -->
+		</div>
+		
+		<a href="#" id="closeWindow">Закрыть окно</a>
+	</div>
 
 	<div id="climateBlock">
 		<p><span id="shtTemp">-- </span><span> C</span></p>
@@ -162,6 +217,22 @@ function sendCom(command, param){
 	}
 }
 
+function sendWifiSett(ssid,pass){
+	var xhr = new XMLHttpRequest();
+	var body = 'wifiSsid=' + encodeURIComponent(ssid) +
+  				'&wifiPass=' + encodeURIComponent(pass);
+
+	xhr.open("POST", '/sett', true);
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+	xhr.onloadend = function() {
+		console.log("sendWifiSett!");
+		console.log(xhr.responseText);
+	};
+
+	xhr.send(body);
+}
+
 // отправка get запроса и получения данных с сервера
 function getData(){
 	var xhr = new XMLHttpRequest();
@@ -179,9 +250,11 @@ function getData(){
 }
 
 function setData(){
-	var dMode = ["WiFi AP","LAN","WiFi AP + LAN","Wifi STA", "WiFi STA + LAN"];
+	var dMode = ["WiFi AP","WiFi AP + LAN","Wifi STA", "WiFi STA + LAN"];
 	deviceMode.innerHTML = dMode[response.setting.mode];
-
+	wifiSsid.innerHTML = response.setting.wifiSsid;
+	wifiIP.innerHTML = response.setting.wifiIp;
+	lanIP.innerHTML = response.setting.lanIp;
 	// data set
 	for(i = 0; i < 8; i++){
 		// relay set

@@ -14,6 +14,8 @@ class ChannelData;
 uint8_t WebServerEsp::mode;
 String WebServerEsp::wifiSsid;
 String WebServerEsp::wifiPass;
+IPAddress WebServerEsp::wifiIp;
+IPAddress WebServerEsp::lanIp;
 String WebServerEsp::dataOut;
 String WebServerEsp::dataIn;
 ChannelData *WebServerEsp::chData;
@@ -39,7 +41,6 @@ void WebServerEsp::init(){
   pref.putString("wifiPass","hopelovehappiness");
   // clearParameters("wifiSsid");
   // clearParameters("wifiPass");
-
   wifiSsid = pref.getString("wifiSsid","0");
   wifiPass = pref.getString("wifiPass","0");
   pref.end();
@@ -49,16 +50,9 @@ void WebServerEsp::init(){
   Serial.println(wifiPass);
 
   /* настройка wifi */
-  if(wifiSsid == "0"){
-    mode = WF_AP;
-    WiFi.softAP("userAP", "012345678");
 
-    Serial.println("HTTP server started");
-    myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
-  }
-  else {
+  if(wifiSsid != "0") {
+    Serial.println("WIFI_STA");
     mode = WF_STA;
     WiFi.mode(WIFI_STA);
     WiFi.begin(wifiSsid, wifiPass);
@@ -79,20 +73,36 @@ void WebServerEsp::init(){
       Serial.print("Connected to ");
       Serial.println(wifiSsid);
       Serial.print("IP address: ");
-      Serial.println(WiFi.localIP());
+      //Serial.println(WiFi.localIP());
+      wifiIp = WiFi.localIP();
+      Serial.println(wifiIp);
     }
+  }
+  if((wifiSsid == "0") || (WiFi.status() != WL_CONNECTED)){
+    mode = WF_AP;
+    Serial.println("WIFI_AP");
+    WiFi.softAP("userAP", "012345678");
+
+    Serial.println("HTTP server started");
+    wifiIp = WiFi.softAPIP();
+    Serial.print("AP IP address: ");
+    Serial.println(wifiIp);
   }
   /* настройка wifi */
 
+  /* настройка w5500 */
   ethServer.init();
   if(ethServer.ethStatus == 2){
     mode++;
     ethServer.dataMain = readFileFS(SPIFFS, "/index.html");
+    lanIp = ethServer.lanIp;
   }
+  /* настройка w5500 */
 
   server.begin();
   server.on("/", handle_OnConnect);
   server.on("/data", handle_Data);
+  server.on("/sett", handle_Sett);
   server.on(UriBraces("/relay:{}"), handle_Relay);
 }
 
@@ -111,6 +121,25 @@ void WebServerEsp::handle_OnConnect() {
 /* Функция формирующая ответ на запрос "/data" веб-сервера */
 void WebServerEsp::handle_Data(){
   server.send(200, "text/html", dataOut);
+}
+
+/* Функция формирующая ответ на запрос "/sett" веб-сервера */
+void WebServerEsp::handle_Sett(){
+  // Serial.print(server.pathArg(0));
+  Serial.println(server.headers());
+  String tmp[2] = {"0"};
+  for(int i = 0; i < server.args(); i++){
+    Serial.println("----");
+    Serial.println(server.argName(i));
+    Serial.println(server.arg(i));
+
+    tmp[i] = server.arg(i);
+  }
+  pref.begin("setting", false);
+  pref.putString("wifiSsid", (String)tmp[0]);
+  pref.putString("wifiPass", (String)tmp[1]);
+  pref.end();
+  server.send(200, "text/html", "sett");
 }
 
 /* Функция формирующая ответ на запрос "/relay:{}" веб-сервера */

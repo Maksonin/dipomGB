@@ -6,6 +6,7 @@
 class ChannelData;
 
 uint8_t WebServerEth::ethStatus;
+IPAddress WebServerEth::lanIp;
 String WebServerEth::dataMain;
 String WebServerEth::dataOut;
 String WebServerEth::dataIn;
@@ -43,6 +44,7 @@ void WebServerEth::init(){
   lanServer.begin();
   Serial.print("w5500 server is at ");
   Serial.println(Ethernet.localIP());
+  lanIp = Ethernet.localIP();
 }
 
 void WebServerEth::handleClient(){

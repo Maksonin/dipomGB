@@ -16,6 +16,8 @@ class WebServerEsp {
     static uint8_t mode;
     static String wifiSsid;
     static String wifiPass;
+    static IPAddress wifiIp;
+    static IPAddress lanIp;
 
     static String dataOut;
     static String dataIn;
@@ -26,6 +28,7 @@ class WebServerEsp {
     void serverHandleClient();
     static void handle_OnConnect();
     static void handle_Data();
+    static void handle_Sett();
     static void handle_Relay();
     static String prepareJsonData();
     void clearParameters(const char *id);
