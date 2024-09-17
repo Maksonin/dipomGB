@@ -1,9 +1,15 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "webServerEthernet.h"
+#include "channelData.h"
+
+class ChannelData;
 
 uint8_t WebServerEth::ethStatus;
+String WebServerEth::dataMain;
 String WebServerEth::dataOut;
+String WebServerEth::dataIn;
+ChannelData *WebServerEth::chData;
 
 byte mac[] = {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
@@ -43,7 +49,7 @@ void WebServerEth::handleClient(){
   // listen for incoming clients
   EthernetClient client = lanServer.available();
   if (client) {
-    Serial.println("new client");
+    Serial.println("New client");
     // an HTTP request ends with a blank line
     bool currentLineIsBlank = true;
     String tmp = "-";
@@ -67,9 +73,9 @@ void WebServerEth::handleClient(){
           }
 
           //Serial.println(tmp);
-          Serial.println(param[0]);
-          Serial.println(param[1]);
-          Serial.println(param[2]);
+          // Serial.println(param[0]);
+          // Serial.println(param[1]);
+          // Serial.println(param[2]);
 
           param[1].trim(); // удаление пробелов из начала и конца строки
 
@@ -79,34 +85,42 @@ void WebServerEth::handleClient(){
             client.println("Connection: close");  // the connection will be closed after completion of the response
             // client.println("Refresh: 5");  // refresh the page automatically every 5 sec
             client.println();
-            //Serial.println(dataOut);
-            client.print(dataOut);
+
+            for(int i = 0; i < dataMain.length(); i++){
+              client.print(dataMain[i]);
+            }
+
             break;
           }
           else if(param[1].equalsIgnoreCase("/data")){
             client.println("HTTP/1.1 200 OK");
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
-            // client.println("Refresh: 5");  // refresh the page automatically every 5 sec
             client.println();
-            client.println("data");
+            //client.println("data");
+            for(int i = 0; i < dataOut.length(); i++){
+              client.print(dataOut[i]);
+            }
             break;
           }
           else if(param[1].equalsIgnoreCase("/relay:")){
             client.println("HTTP/1.1 200 OK");
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
-            // client.println("Refresh: 5");  // refresh the page automatically every 5 sec
             client.println();
-            client.println("relay");
+            client.print("relay ");
             client.println(param[2]);
+            uint8_t relay = param[2].toInt() - 1;
+            if(chData->channel[relay] == 1)
+              chData->channel[relay] = 0;
+            else
+              chData->channel[relay] = 1;
             break;
           }
           else {
-            client.println("HTTP/1.1 200 OK");
+            client.println("HTTP/1.1 404 Not Found");
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
-            // client.println("Refresh: 5");  // refresh the page automatically every 5 sec
             client.println();
             client.println("no page");
             break;
@@ -125,6 +139,6 @@ void WebServerEth::handleClient(){
     delay(1);
     // close the connection:
     client.stop();
-    Serial.println("client disconnected");
+    Serial.println("Client disconnected");
   }
 }

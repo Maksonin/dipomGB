@@ -2,7 +2,8 @@
 #include <Arduino.h>
 
 
-class ChannelData{
+class ChannelData
+{
   public:
     static float dsTemper;
     static float shtTemper;

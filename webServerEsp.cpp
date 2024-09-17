@@ -9,11 +9,14 @@
 
 #include "channelData.h"
 
+class ChannelData;
+
 uint8_t WebServerEsp::mode;
 String WebServerEsp::wifiSsid;
 String WebServerEsp::wifiPass;
 String WebServerEsp::dataOut;
 String WebServerEsp::dataIn;
+ChannelData *WebServerEsp::chData;
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
@@ -84,7 +87,7 @@ void WebServerEsp::init(){
   ethServer.init();
   if(ethServer.ethStatus == 2){
     mode++;
-    ethServer.dataOut = readFileFS(SPIFFS, "/index.html");
+    ethServer.dataMain = readFileFS(SPIFFS, "/index.html");
   }
 
   server.begin();
@@ -96,6 +99,8 @@ void WebServerEsp::init(){
 void WebServerEsp::serverHandleClient(){
   server.handleClient();
   ethServer.handleClient();
+
+  ethServer.dataOut = dataOut;
 }
 
 /* Функция формирующая ответ на запрос "/" веб-сервера */
@@ -115,10 +120,10 @@ void WebServerEsp::handle_Relay(){
   Serial.println(relay);
   uint8_t i = relay.toInt() - 1;
   
-  // if(pinStatus.channel[i] == 1)
-  //   pinStatus.channel[i] = 0;
-  // else
-  //   pinStatus.channel[i] = 1;
+  if(chData->channel[i] == 1)
+    chData->channel[i] = 0;
+  else
+    chData->channel[i] = 1;
 
   server.send(200, "text/html","OK");
 }

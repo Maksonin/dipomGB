@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include "FS.h"
 
+class ChannelData;
+
 enum {
   WF_AP,
   WF_AP_LAN,
@@ -17,6 +19,8 @@ class WebServerEsp {
 
     static String dataOut;
     static String dataIn;
+
+    static ChannelData *chData;
 
     void init();
     void serverHandleClient();

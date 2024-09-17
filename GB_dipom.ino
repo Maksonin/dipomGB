@@ -8,6 +8,7 @@
 
 WebServerEsp myServer;
 ChannelData data;
+ChannelData *chData = &data;
 
 String prepareJsonData(){
   String tmp = "";
@@ -75,13 +76,13 @@ void setup() {
   data.init();
   /* настройка датчиков */
 
-  
+  myServer.chData = chData;
 }
 
 /* цикл */
 void loop() {
   myServer.dataOut = prepareJsonData();
-
+  
   myServer.serverHandleClient();
 
   // Serial.print("AP IP address: ");
