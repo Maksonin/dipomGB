@@ -1,5 +1,6 @@
 #include "webServerEsp.h"
 #include "channelData.h"
+#include "Wire.h"
 
 #define MISO 5
 #define MOSI 6
@@ -69,8 +70,6 @@ String prepareJsonData(){
   return tmp;
 }
 
-
-
 /* настройка */
 void setup() {
   Serial.begin(9600);
@@ -98,8 +97,7 @@ void loop() {
 
   data.getShtTH();
   data.getPinStatus();
-
-
+  data.setPins();
   // listDir(SPIFFS, "/", 0);
   // readFileFS(SPIFFS, "/index.html");
 

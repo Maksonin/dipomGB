@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #include <GyverDS18.h>
 #include <microDS3231.h>
 #include "Wire.h"
@@ -56,4 +57,19 @@ void ChannelData::getPinStatus(){
 
   digitalWrite(ledPin1, channel[0]);
   digitalWrite(ledPin2, channel[1]);
+}
+
+/* установка выходов расширителя в соответствии с массивом состояний */
+void ChannelData::setPins(){
+  uint8_t dataHighByte = 255; // Старший байт (P10...P17)
+  uint8_t dataLowByte = 0; // Младший байт (P00...P07)
+
+  for(int i = 0; i < 8; i++){
+    dataLowByte |= channel[i] << i;
+  }
+
+  Wire.beginTransmission(0x20);
+  Wire.write(dataLowByte); // Записываем младший байт (P00...P07)
+  Wire.write(dataHighByte); // Записываем старший байт (P10...P17)
+  Wire.endTransmission();
 }

@@ -4,6 +4,7 @@
 #include "channelData.h"
 #include <Preferences.h>
 #include "SPIFFS.h"
+#include "Wire.h"
 
 class ChannelData;
 class WebServerEsp;
@@ -156,6 +157,19 @@ void WebServerEth::handleClient(){
               chData->channel[relay] = 0;
             else
               chData->channel[relay] = 1;
+
+            // uint8_t dataHighByte = 0; // Старший байт (P10...P17)
+            // uint8_t dataLowByte = 0; // Младший байт (P00...P07)
+
+            // for(int i = 0; i < 8; i++){
+            //   dataLowByte |= chData->channel[i] << i;
+            // }
+            // Serial.println(dataLowByte);
+
+            // Wire.beginTransmission(0x20);
+            // Wire.write(dataHighByte); // Записываем младший байт (P00...P07)
+            // Wire.write(dataLowByte); // Записываем старший байт (P10...P17)
+            // Wire.endTransmission();
             break;
           }
           else {

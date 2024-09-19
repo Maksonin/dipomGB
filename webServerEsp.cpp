@@ -103,7 +103,6 @@ void WebServerEsp::init(){
 
   needToInit = false;
 
-
   server.begin();
   server.on("/", handle_OnConnect);
   server.on("/data", handle_Data);
