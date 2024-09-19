@@ -219,8 +219,8 @@ function sendCom(command, param){
 
 function sendWifiSett(ssid,pass){
 	var xhr = new XMLHttpRequest();
-	var body = 'wifiSsid=' + encodeURIComponent(ssid) +
-  				'&wifiPass=' + encodeURIComponent(pass);
+	var body = 'wifiSsid=' + ssid +
+  				'&wifiPass=' + pass;
 
 	xhr.open("POST", '/sett', true);
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

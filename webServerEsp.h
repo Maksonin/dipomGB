@@ -13,6 +13,8 @@ enum {
 
 class WebServerEsp {
   public:
+    static bool needToInit;
+    
     static uint8_t mode;
     static String wifiSsid;
     static String wifiPass;
@@ -21,7 +23,7 @@ class WebServerEsp {
 
     static String dataOut;
     static String dataIn;
-
+    
     static ChannelData *chData;
 
     void init();

@@ -11,6 +11,7 @@
 
 class ChannelData;
 
+bool WebServerEsp::needToInit;
 uint8_t WebServerEsp::mode;
 String WebServerEsp::wifiSsid;
 String WebServerEsp::wifiPass;
@@ -37,8 +38,8 @@ void WebServerEsp::init(){
   /* восстановление настроек из энергонезависимой памяти */
   pref.begin("setting", false);
 
-  pref.putString("wifiSsid","Netta Wi-Fi");
-  pref.putString("wifiPass","hopelovehappiness");
+  // pref.putString("wifiSsid","Netta Wi-Fi");
+  // pref.putString("wifiPass","hopelovehappiness");
   // clearParameters("wifiSsid");
   // clearParameters("wifiPass");
   wifiSsid = pref.getString("wifiSsid","0");
@@ -93,11 +94,15 @@ void WebServerEsp::init(){
   /* настройка w5500 */
   ethServer.init();
   if(ethServer.ethStatus == 2){
+    ethServer.needToInit = false;
     mode++;
     ethServer.dataMain = readFileFS(SPIFFS, "/index.html");
     lanIp = ethServer.lanIp;
   }
   /* настройка w5500 */
+
+  needToInit = false;
+
 
   server.begin();
   server.on("/", handle_OnConnect);
@@ -107,6 +112,10 @@ void WebServerEsp::init(){
 }
 
 void WebServerEsp::serverHandleClient(){
+  if((needToInit)||(ethServer.needToInit)){
+    init();
+  }
+
   server.handleClient();
   ethServer.handleClient();
 
@@ -125,7 +134,6 @@ void WebServerEsp::handle_Data(){
 
 /* Функция формирующая ответ на запрос "/sett" веб-сервера */
 void WebServerEsp::handle_Sett(){
-  // Serial.print(server.pathArg(0));
   Serial.println(server.headers());
   String tmp[2] = {"0"};
   for(int i = 0; i < server.args(); i++){
@@ -139,6 +147,7 @@ void WebServerEsp::handle_Sett(){
   pref.putString("wifiSsid", (String)tmp[0]);
   pref.putString("wifiPass", (String)tmp[1]);
   pref.end();
+  needToInit = true;
   server.send(200, "text/html", "sett");
 }
 

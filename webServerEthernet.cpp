@@ -2,15 +2,23 @@
 #include <Ethernet.h>
 #include "webServerEthernet.h"
 #include "channelData.h"
+#include <Preferences.h>
+#include "SPIFFS.h"
 
 class ChannelData;
+class WebServerEsp;
 
+bool WebServerEth::needToInit;
 uint8_t WebServerEth::ethStatus;
 IPAddress WebServerEth::lanIp;
 String WebServerEth::dataMain;
 String WebServerEth::dataOut;
 String WebServerEth::dataIn;
 ChannelData *WebServerEth::chData;
+
+#define FORMAT_SPIFFS_IF_FAILED true
+
+Preferences prefLan;
 
 byte mac[] = {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
@@ -51,10 +59,10 @@ void WebServerEth::handleClient(){
   // listen for incoming clients
   EthernetClient client = lanServer.available();
   if (client) {
-    Serial.println("New client");
+    //Serial.println("New client");
     // an HTTP request ends with a blank line
     bool currentLineIsBlank = true;
-    String tmp = "-";
+    String tmp = "";
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -65,6 +73,8 @@ void WebServerEth::handleClient(){
           int i = 0;
           int space = 0;
           String param[3];
+          String postParam[4];
+
           while(tmp[i] != '\0'){
               param[space] += tmp[i];
               if((tmp[i] == ' ')||(tmp[i] == ':'))
@@ -72,6 +82,21 @@ void WebServerEth::handleClient(){
               if(space == 3)
                   break;
               i++;
+          }
+
+          if(tmp.startsWith("POST")){
+            // Serial.println("POST!");
+            int i = 0;
+            while(client.available())
+            {
+              c = client.read();
+              if((c == '=') || (c == '&')){
+                i++;
+                continue;
+              }
+              postParam[i] += c;
+              // Serial.write(c);
+            }
           }
 
           //Serial.println(tmp);
@@ -103,6 +128,20 @@ void WebServerEth::handleClient(){
             for(int i = 0; i < dataOut.length(); i++){
               client.print(dataOut[i]);
             }
+            break;
+          }
+          else if(param[1].equalsIgnoreCase("/sett")){
+            client.println("HTTP/1.1 200 OK");
+            client.println("Content-Type: text/html");
+            client.println("Connection: close");  // the connection will be closed after completion of the response
+            client.println();
+            client.println("WiFi setting");
+
+            prefLan.begin("setting", false);
+            prefLan.putString("wifiSsid", (String)postParam[1]);
+            prefLan.putString("wifiPass", (String)postParam[3]);
+            prefLan.end();
+            needToInit = true;
             break;
           }
           else if(param[1].equalsIgnoreCase("/relay:")){
@@ -141,6 +180,6 @@ void WebServerEth::handleClient(){
     delay(1);
     // close the connection:
     client.stop();
-    Serial.println("Client disconnected");
+    //Serial.println("Client disconnected");
   }
 }

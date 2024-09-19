@@ -7,6 +7,7 @@
 #define CS 10
 
 WebServerEsp myServer;
+
 ChannelData data;
 ChannelData *chData = &data;
 
