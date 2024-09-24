@@ -60,7 +60,6 @@ void WebServerEth::handleClient(){
   // listen for incoming clients
   EthernetClient client = lanServer.available();
   if (client) {
-    //Serial.println("New client");
     // an HTTP request ends with a blank line
     bool currentLineIsBlank = true;
     String tmp = "";
@@ -86,7 +85,6 @@ void WebServerEth::handleClient(){
           }
 
           if(tmp.startsWith("POST")){
-            // Serial.println("POST!");
             int i = 0;
             while(client.available())
             {
@@ -96,14 +94,9 @@ void WebServerEth::handleClient(){
                 continue;
               }
               postParam[i] += c;
-              // Serial.write(c);
             }
           }
 
-          //Serial.println(tmp);
-          // Serial.println(param[0]);
-          // Serial.println(param[1]);
-          // Serial.println(param[2]);
 
           param[1].trim(); // удаление пробелов из начала и конца строки
 
@@ -157,19 +150,6 @@ void WebServerEth::handleClient(){
               chData->channel[relay] = 0;
             else
               chData->channel[relay] = 1;
-
-            // uint8_t dataHighByte = 0; // Старший байт (P10...P17)
-            // uint8_t dataLowByte = 0; // Младший байт (P00...P07)
-
-            // for(int i = 0; i < 8; i++){
-            //   dataLowByte |= chData->channel[i] << i;
-            // }
-            // Serial.println(dataLowByte);
-
-            // Wire.beginTransmission(0x20);
-            // Wire.write(dataHighByte); // Записываем младший байт (P00...P07)
-            // Wire.write(dataLowByte); // Записываем старший байт (P10...P17)
-            // Wire.endTransmission();
             break;
           }
           else {

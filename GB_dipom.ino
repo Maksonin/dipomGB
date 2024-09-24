@@ -12,6 +12,7 @@ WebServerEsp myServer;
 ChannelData data;
 ChannelData *chData = &data;
 
+// функция формирует JSON для отправки в веб-интерфейс
 String prepareJsonData(){
   String tmp = "";
   tmp += "{ ";
@@ -28,29 +29,12 @@ String prepareJsonData(){
   tmp += "\"" + myServer.lanIp.toString() + "\"";
   tmp += " },";
 
-  tmp += "\"temper\": { \"shtTemper\":";
-  tmp += data.shtTemper;
-  tmp += ", \"shtHumid\":";
-  tmp += data.shtHumid;
-  tmp += " },";
-
-  tmp += "\"pinStatus\": { \"btn\":";
-  tmp += data.btn1;
-  tmp += ", \"led\": [";
-  tmp += (String)data.led1 + "," + (String)data.led2;
-  tmp += "]";
+  tmp += "\"pinStatus\": { \"relayV\":";
+  tmp += (String)data.channelV;
 
   tmp += ", \"relay\": [";
   for(int i = 0; i < 8; i++){
     tmp += (String)data.channel[i];
-    if(i < 7)
-       tmp += ",";
-  }
-  tmp += "]";
-
-  tmp += ", \"relayV\": [";
-  for(int i = 0; i < 8; i++){
-    tmp += (String)data.channelV[i];
     if(i < 7)
        tmp += ",";
   }
@@ -74,63 +58,22 @@ String prepareJsonData(){
 void setup() {
   Serial.begin(9600);
 
+  /* настройка веб-интерфейсов */
   myServer.init();
 
   /* настройка датчиков */
   data.init();
-  /* настройка датчиков */
 
   myServer.chData = chData;
 }
 
 /* цикл */
 void loop() {
-  myServer.dataOut = prepareJsonData();
+  myServer.dataOut = prepareJsonData(); // подготовка JSON посылки
   
-  myServer.serverHandleClient();
+  myServer.serverHandleClient(); // прослушивание запросов к веб-серверам
 
-  // Serial.print("AP IP address: ");
-  // Serial.println(myIP);
+  data.setPins(); // устновка состояния каналов управления
 
-  // readOW();
-  // getDStime();
-
-  data.getShtTH();
-  data.getPinStatus();
-  data.setPins();
-  // listDir(SPIFFS, "/", 0);
-  // readFileFS(SPIFFS, "/index.html");
-
-  // printUartData();
-
-  //delay(300);
-
+  data.getCurrentdata(); // чтение значений тока в каналах управления
 }
-
-/* вывод данных в UART */
-// void printUartData(){
-//   Serial.print("DS temp: ");
-//   Serial.println(dataSensors.dsTemper);
-//   Serial.print("SHT temp: ");
-//   Serial.println(dataSensors.shtTemper);
-//   Serial.print("SHT humid: ");
-//   Serial.println(dataSensors.shtHumid);
- 
-//   Serial.print("Hour: ");
-//   Serial.println(dataSensors.hour);
-//   Serial.print("Minutes: ");
-//   Serial.println(dataSensors.min);
-//   Serial.print("Secundes: ");
-//   Serial.println(dataSensors.sec);
-  
-//   Serial.println("");
-
-//   Serial.print("Btn1: ");
-//   Serial.println(pinStatus.btn1);
-//   Serial.print("Led1: ");
-//   Serial.println(pinStatus.led1);
-//   Serial.print("Led2: ");
-//   Serial.println(pinStatus.led2);
-
-//   Serial.println("");
-// }

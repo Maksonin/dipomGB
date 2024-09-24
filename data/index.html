@@ -16,9 +16,18 @@
 		text-align: center;
 	}
 
+	h3 {
+		margin: 5px;
+	}
+
+	button {
+		margin: 10px;
+	}
+
 	#mainTitle {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		width: 100%;
 		background-color: aquamarine;
 		color: midnightblue;
@@ -45,7 +54,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		margin: 7% auto;
+		margin: 4% auto;
 		background: white;
 		flex-direction: column;
 		flex-wrap: wrap;
@@ -53,8 +62,22 @@
 	}
 	#settingWindow:target {display: flex;}
 
+	.blockSettings {
+		border-bottom: 1px solid;
+	}
+
 	#closeWindow {
-		
+		border: 1px solid;
+		width: 100%;
+		text-decoration: none;
+		color: black;
+		padding: 2px;
+		margin-top: 10px;
+		background-color: linen;
+	}
+
+	#vBlock {
+
 	}
 	
 	.readSetting {
@@ -71,6 +94,7 @@
 
 	.menuBlockSym {
 		font-size: 2em;
+		text-decoration: none;
 	}
 
 	#channelUpravBlock {
@@ -115,7 +139,7 @@
 		<div id="menuSetting">
 			<span id="deviceMode" class="menuBlockText">AP</span>
 		</div>
-		<h3 >Control of relay channels</h3>
+		<h3>Устройство удаленного управления каналами</h3>
 		<div id="menuSetting">
 			<a href="#settingWindow" class="menuBlockSym"> &#9881 </a>
 		</div>
@@ -123,7 +147,9 @@
 	</div>
 
 	<div id="settingWindow">
-		<h3>Настройки</h3>
+		<div class="blockSettings">
+			<h3>Настройки</h3>
+		</div>
 		<div class="blockSettings">
 			<p>Текущее подключение WiFi</p>
 			<p><span for="wifiSsid">SSID </span><span id="wifiSsid" class="readSetting">--</span></p>
@@ -134,61 +160,51 @@
 			<p><span for="lanIP">IP </span><span id="lanIP" class="readSetting">--</span></p>
 		</div>
 		<div class="blockSettings">
-		<!-- <form id="auth" action="" method="post" class="blockSettings"> -->
 			<p>Новые настройки WiFi</p>
 			<p><span for="wifiSsidNew">SSID </span><input id="wifiSsidNew" type="text"></p>
-			<p><span for="wifiPasNew">PASS </span><input id="wifiPasNew" type="password"></p>
+			<p><span for="wifiPasNew">PASS </span><input id="wifiPasNew" type="password" ></p>
 			<button onclick="sendWifiSett(wifiSsidNew.value,wifiPasNew.value)">Сохранить</button>
-		<!-- </form> -->
 		</div>
 		
 		<a href="#" id="closeWindow">Закрыть окно</a>
 	</div>
 
-	<div id="climateBlock">
-		<p><span id="shtTemp">-- </span><span> C</span></p>
-		<p><span id="shtHum"> -- </span><span> %</span></p>
+	<div id="vBlock">
+		<p>Напряжение на входе</p>
+		<span id="shtHum"> -- </span><span> V</span></p>
 	</div>
 
 	<div id="channelUpravBlock">
 		<div class="channelBlock">  
 			<p class="channel">1</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">2</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">3</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">4</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">5</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">6</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">7</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 		<div class="channelBlock">  
 			<p class="channel">8</p>
-			<p><span class="channelV">--</span><span> В</span></p>
 			<p><span class="channelA">--</span><span> A</span></p>
 		</div>
 	</div>
@@ -219,6 +235,13 @@ function sendCom(command, param){
 
 function sendWifiSett(ssid,pass){
 	var xhr = new XMLHttpRequest();
+
+	if(ssid == ""){
+		alert("Empty ssid");
+		return;
+	}
+		
+
 	var body = 'wifiSsid=' + ssid +
   				'&wifiPass=' + pass;
 
@@ -264,11 +287,11 @@ function setData(){
 			channel[i].className = "channel channelClose";
 
 		// V,A sensors set
-		channelV[i].innerHTML = response.pinStatus.relayV[i];
+		//channelV[i].innerHTML = response.pinStatus.relayV[i];
 		channelA[i].innerHTML = response.pinStatus.relayA[i];
 	}
-	shtTemp.innerHTML = response.temper.shtTemper;
-	shtHum.innerHTML = response.temper.shtHumid;
+	// shtTemp.innerHTML = response.temper.shtTemper;
+	// shtHum.innerHTML = response.temper.shtHumid;
 
 }
 
@@ -277,13 +300,12 @@ var timerID = setInterval(getData, 2000);
 
 // обработка события нажатия на поле канала
 var channel = document.getElementsByClassName('channel');
-var channelV = document.getElementsByClassName('channelV');
+// var channelV = document.getElementsByClassName('channelV');
 var channelA = document.getElementsByClassName('channelA');
 
 for (var i = 0; i < channel.length; i++) {
     channel[i].addEventListener('click', channelClick);
 }
-
 
 
 </script>
