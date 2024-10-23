@@ -31,7 +31,7 @@ void ChannelData::setPins(){
   uint8_t dataLowByte = 0; // Младший байт (P00...P07)
 
   for(int i = 0; i < 8; i++){
-    dataLowByte |= channel[i] << i;
+    dataLowByte |= !channel[i] << i;
   }
 
   Wire.beginTransmission(0x20);

@@ -28,7 +28,7 @@ byte mac[] = {
 EthernetServer lanServer(80);
 
 void WebServerEth::init(){
-  Ethernet.init(10);
+  Ethernet.init(7);
   Ethernet.begin(mac);
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
     Serial.println("Ethernet shield was not found");

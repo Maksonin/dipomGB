@@ -171,7 +171,7 @@
 
 	<div id="vBlock">
 		<p>Напряжение на входе</p>
-		<span id="shtHum"> -- </span><span> V</span></p>
+		<span id="vIn"> -- </span><span> V</span></p>
 	</div>
 
 	<div id="channelUpravBlock">
@@ -214,12 +214,14 @@
 
 var response;
 
+// функция обработки нажатия на кнопку канала
 function channelClick(){
 	console.log(this.getHTML());
 	this.className = "channel channelWait";
 	sendCom("relay", this.getHTML());
 }
 
+// отправка команды на сервер
 function sendCom(command, param){
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', "/" + command + ":" + param, true);
@@ -233,6 +235,7 @@ function sendCom(command, param){
 	}
 }
 
+// отправка настроек Wi-Fi на сервер
 function sendWifiSett(ssid,pass){
 	var xhr = new XMLHttpRequest();
 
@@ -241,7 +244,6 @@ function sendWifiSett(ssid,pass){
 		return;
 	}
 		
-
 	var body = 'wifiSsid=' + ssid +
   				'&wifiPass=' + pass;
 
@@ -272,6 +274,7 @@ function getData(){
 	}
 }
 
+// функция устанавливает полученные данные в соответствующие элементы страницы
 function setData(){
 	var dMode = ["WiFi AP","WiFi AP + LAN","Wifi STA", "WiFi STA + LAN"];
 	deviceMode.innerHTML = dMode[response.setting.mode];
@@ -287,12 +290,9 @@ function setData(){
 			channel[i].className = "channel channelClose";
 
 		// V,A sensors set
-		//channelV[i].innerHTML = response.pinStatus.relayV[i];
+		vIn.innerHTML = response.pinStatus.relayV;
 		channelA[i].innerHTML = response.pinStatus.relayA[i];
 	}
-	// shtTemp.innerHTML = response.temper.shtTemper;
-	// shtHum.innerHTML = response.temper.shtHumid;
-
 }
 
 getData();
@@ -306,8 +306,6 @@ var channelA = document.getElementsByClassName('channelA');
 for (var i = 0; i < channel.length; i++) {
     channel[i].addEventListener('click', channelClick);
 }
-
-
 </script>
 
 
