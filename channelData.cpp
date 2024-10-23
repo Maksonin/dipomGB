@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "HardwareSerial.h"
 #include <GyverDS18.h>
 #include <microDS3231.h>
@@ -13,16 +14,40 @@
 bool ChannelData::channel[8];
 float ChannelData::channelV;
 float ChannelData::channelA[8];
-uint16_t ChannelData::acp;
+uint16_t ChannelData::V_MK;
 const int ChannelData::spiClk;  // 1 MHz
 
+hw_timer_t *timer = NULL;
 SPIClass *vspi = NULL;
 
+
+// прерывание таймера
+void ARDUINO_ISR_ATTR onTimer() {
+  ChannelData::V_MK = analogRead(0);
+  Serial.println(ChannelData::V_MK);
+  Serial.println((11 * ChannelData::V_MK * 0.33)/4096);
+}
+
+// инициализация перифирии
 void ChannelData::init(){
   Wire.begin();
 
   vspi = new SPIClass(SPI);
   vspi->begin();
+  
+  /* Конфигурация АЦП */
+  analogReadResolution(12);
+  analogSetAttenuation(ADC_2_5db);
+
+  /* Конфигурация таймера */
+  // Set timer frequency to 1Mhz
+  timer = timerBegin(1000000);
+  // Attach onTimer function to our timer.
+  timerAttachInterrupt(timer, &onTimer);
+
+  // Set alarm to call onTimer function every second (value in microseconds).
+  // Repeat the alarm (third parameter) with unlimited count = 0 (fourth parameter).
+  timerAlarm(timer, 1000000, true, 0);
 }
 
 /* установка выходов расширителя в соответствии с массивом состояний */

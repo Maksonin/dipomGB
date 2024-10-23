@@ -32,6 +32,9 @@ String prepareJsonData(){
   tmp += "\"pinStatus\": { \"relayV\":";
   tmp += (String)data.channelV;
 
+  tmp += ", \"Vmk\": ";
+  tmp += (String)data.V_MK;
+
   tmp += ", \"relay\": [";
   for(int i = 0; i < 8; i++){
     tmp += (String)data.channel[i];

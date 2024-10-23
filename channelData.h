@@ -7,7 +7,7 @@ class ChannelData
     static bool channel[8];
     static float channelV;
     static float channelA[8];
-    static uint16_t acp;
+    static uint16_t V_MK;
     static const int spiClk = 1000000;  // 1 MHz
     
     void init();

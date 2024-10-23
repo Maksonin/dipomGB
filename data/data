@@ -1,37 +1,33 @@
 {
     "setting": {
-        "mode": 3,
+        "mode": 0,
         "wifiSsid": "Netta Wi-Fi",
         "wifiPass": "hopelovehappiness",
-        "wifiIp": "192.168.1.19",
-        "lanIp": "192.168.1.18"
+        "wifiIp": "192.168.4.1",
+        "lanIp": "0.0.0.0"
     },
     "pinStatus": {
-        "btn": 1,
-        "led": [
-            0,
-            0
-        ],
+        "relayV": 3300,
+        "Vmk": 3088,
         "relay": [
             0,
             0,
-            1,
             0,
             1,
+            0,
             0,
             0,
             0
         ],
-        "relayV": 35,
         "relayA": [
-            0,
-            0,
-            0.4,
-            0,
-            2,
-            0,
-            0,
-            0
+            0.00,
+            0.00,
+            0.00,
+            0.00,
+            0.00,
+            0.00,
+            0.00,
+            0.00
         ]
     }
 }

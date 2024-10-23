@@ -172,6 +172,8 @@
 	<div id="vBlock">
 		<p>Напряжение на входе</p>
 		<span id="vIn"> -- </span><span> V</span></p>
+		<p>Напряжение микроконтроллера</p>
+		<span id="vMk"> -- </span><span> V</span></p>
 	</div>
 
 	<div id="channelUpravBlock">
@@ -290,7 +292,8 @@ function setData(){
 			channel[i].className = "channel channelClose";
 
 		// V,A sensors set
-		vIn.innerHTML = response.pinStatus.relayV;
+		vIn.innerHTML = ((1.1 * response.pinStatus.relayV * 13.64) / 4096).toFixed(2);;
+		vMk.innerHTML = ((11 * response.pinStatus.Vmk * 0.333) / 4096).toFixed(2);
 		channelA[i].innerHTML = response.pinStatus.relayA[i];
 	}
 }
